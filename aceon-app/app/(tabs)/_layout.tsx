@@ -1,11 +1,13 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { COLORS } from "@/constants/theme";
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
+        tabBarActiveTintColor: COLORS.primary,
       }}
     >
       <Tabs.Screen
@@ -28,7 +30,12 @@ export default function TabLayout() {
         name="create"
         options={{
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="add-circle" color={color} size={size} />
+            <Ionicons
+              className="bg-green-600 text-white"
+              name="add-circle"
+              color={color}
+              size={size}
+            />
           ),
         }}
       />
@@ -44,7 +51,12 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="person-circle" color={color} size={size} />
+            <Ionicons
+              className=""
+              name="person-circle"
+              color={color}
+              size={size}
+            />
           ),
         }}
       />
