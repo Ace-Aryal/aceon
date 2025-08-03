@@ -1,16 +1,16 @@
 # aceon
+
 Aceon is a Instagram app clone which i am currently building with React Native and Expo while I am learning Mobile Development
 
-## Notes 
+## Notes
 
 ### Basics
-
 
 ---
 
 ## 🔤 React Native Core Components (aka "tags") with Use Cases
 
-| 🏷 Component           | 📚 Description / Use Case                                                    |
+| 🏷 Component            | 📚 Description / Use Case                                                    |
 | ---------------------- | ---------------------------------------------------------------------------- |
 | `View`                 | Generic container (like `<div>`). Use for layout, cards, rows, etc.          |
 | `Text`                 | For displaying **all text**. No plain strings allowed outside of `<Text>`.   |
@@ -45,8 +45,8 @@ Aceon is a Instagram app clone which i am currently building with React Native a
 
 You may use these later but not core RN:
 
-* `Button` (from NativeBase, Paper, or your own)
-* `Card`, `Badge`, `Avatar`, `Dialog` → Build with `View` + `Text` + `Image` + styling
+- `Button` (from NativeBase, Paper, or your own)
+- `Card`, `Badge`, `Avatar`, `Dialog` → Build with `View` + `Text` + `Image` + styling
 
 ---
 
@@ -62,8 +62,6 @@ You may use these later but not core RN:
 <ScrollView>     // allow scrolling
 <SafeAreaView>   // prevent notch overlap
 ```
-
-
 
 ---
 
@@ -91,10 +89,10 @@ Organizing code well helps scalability and maintainability.
 
 ## Why put files together?
 
-* **Pages and layouts** live in `/app` (Expo Router picks this up automatically).
-* **Components** are colocated in `/components` for reuse.
-* **Hooks, utils, assets** are shared resources.
-* If a component is **only used by one screen/page**, you can colocate it inside that page folder, e.g.:
+- **Pages and layouts** live in `/app` (Expo Router picks this up automatically).
+- **Components** are colocated in `/components` for reuse.
+- **Hooks, utils, assets** are shared resources.
+- If a component is **only used by one screen/page**, you can colocate it inside that page folder, e.g.:
 
 ```
 /app
@@ -124,9 +122,9 @@ Expo Router uses **file-system based routing** inspired by Next.js.
 
 ### `_layout.tsx`
 
-* Like a **root wrapper** for your app.
-* Wraps all nested pages.
-* Good place to add `SafeAreaView`, `StatusBar`, or persistent UI (like bottom tabs).
+- Like a **root wrapper** for your app.
+- Wraps all nested pages.
+- Good place to add `SafeAreaView`, `StatusBar`, or persistent UI (like bottom tabs).
 
 Example:
 
@@ -149,9 +147,9 @@ export default function Layout() {
 
 # 📱 Navigation in Expo
 
-* Expo Router **uses React Navigation under the hood**, but you don’t write navigators manually.
-* You navigate by **naming files and folders** inside `/app`.
-* For modals, nested routes, and parameters, you use special file/folder conventions.
+- Expo Router **uses React Navigation under the hood**, but you don’t write navigators manually.
+- You navigate by **naming files and folders** inside `/app`.
+- For modals, nested routes, and parameters, you use special file/folder conventions.
 
 ---
 
@@ -169,11 +167,11 @@ export default function Layout() {
 
 # 🧩 Components Colocation & Best Practices
 
-* **Shared components** → `/components`
-* **Page-specific components** → colocate near page file
-* Keep components **small and focused**
-* Use **NativeWind + cn() helper** for styling (no style objects)
-* Prefer **functional components** with typed props (if using TS)
+- **Shared components** → `/components`
+- **Page-specific components** → colocate near page file
+- Keep components **small and focused**
+- Use **NativeWind + cn() helper** for styling (no style objects)
+- Prefer **functional components** with typed props (if using TS)
 
 Example:
 
@@ -205,15 +203,163 @@ Example:
 
 # 🚀 Next Steps
 
-* Build a simple screen with `/app/index.tsx` and `_layout.tsx`
-* Create a reusable button component in `/components/Button.tsx`
-* Add a nested route with parameters and modal screen example
+- Build a simple screen with `/app/index.tsx` and `_layout.tsx`
+- Create a reusable button component in `/components/Button.tsx`
+- Add a nested route with parameters and modal screen example
 
 ---
-
-
 
 These are your **“HTML tags”** in React Native.
 
 ---
 
+# Styling
+
+---
+
+### ✅ 1. **Styling in React Native = camelCase (like React)**
+
+Yes. CSS-like styles are written in **camelCase**, using **JavaScript objects**.
+
+```tsx
+<View style={{ backgroundColor: "red", paddingVertical: 10 }} />
+```
+
+---
+
+### ✅ 2. **Layout structure in an Expo app (tabs, SafeArea, best practices)**
+
+Think of it like Next.js with file-based routing:
+
+#### 🔹 **Expo Router** Layout Convention (like Next.js):
+
+- `app/`: all routes go here
+- `_layout.tsx`: shared layout for child routes (like `_app.tsx` in Next.js)
+- `tabs.tsx`: for bottom tab navigator
+- `stack.tsx`: for stack navigator
+
+#### 🔹 Example structure:
+
+```
+app/
+├── _layout.tsx        // wraps all screens
+├── tabs/              // like pages inside Tab Navigator
+│   ├── index.tsx
+│   ├── settings.tsx
+├── (auth)/            // another layout group (e.g., login/signup)
+│   ├── login.tsx
+├── components/        // reusable components
+```
+
+#### 🔹 **SafeAreaView**:
+
+Wrap your screen content with `SafeAreaView` to avoid notches, status bars.
+
+```tsx
+import { SafeAreaView } from "react-native-safe-area-context";
+
+<SafeAreaView style={{ flex: 1 }}>{/* Your content */}</SafeAreaView>;
+```
+
+---
+
+### ✅ 3. **Style methods comparison**
+
+| Method                  | Pros                                         | Cons                         | DX/Speed         |
+| ----------------------- | -------------------------------------------- | ---------------------------- | ---------------- |
+| **Inline Object**       | Quick, flexible                              | No autocomplete, can't reuse | 🚀 Fast to write |
+| **`StyleSheet.create`** | Autocomplete, better perf (some caching)     | More boilerplate             | ✅ Better perf   |
+| **NativeWind**          | Tailwind-like utility classes, super fast DX | Custom styles need config    | 💯 Best DX       |
+
+➡️ **Best Practical Combo**: NativeWind + occasional `StyleSheet.create` for custom styles.
+
+---
+
+### ✅ 4. **Can we use `cn` with NativeWind?**
+
+Yes — NativeWind supports **className merging**. You can use a `cn` function like:
+
+```ts
+import { clsx } from "clsx"; // or tailwind-variants' `cn`
+
+<View className={cn("p-4", isActive && "bg-green-500")} />;
+```
+
+---
+
+### ✅ 5. **What CSS properties don’t work in React Native?**
+
+React Native **does NOT support all web CSS properties**. Here are some **unsupported or partially supported**:
+
+- No `z-index` layering for `position: relative` (only works with `absolute`)
+- No `box-shadow` (Android support is limited)
+- No `gap`, `grid`, `object-fit`, `overflow: scroll` (use `ScrollView`)
+- No direct support for `::before`, `::after`, or other pseudo elements
+- No `hover`, `focus`, `media queries` (need libraries)
+
+➡️ Use **utility-first styles** (NativeWind) or RN-supported styles only.
+
+---
+
+### ✅ 6. **Dark mode / Light mode control in React Native**
+
+Use **`useColorScheme`** or theme providers:
+
+```ts
+import { useColorScheme } from "react-native";
+
+const colorScheme = useColorScheme(); // 'light' or 'dark'
+```
+
+**With NativeWind:**
+
+```ts
+<Text className="text-black dark:text-white" />
+```
+
+Set theme globally with `tailwind.config.js`:
+
+```js
+darkMode: 'media', // or 'class'
+```
+
+---
+
+### ✅ 7. **Do all `<View>` components have `flex` by default?**
+
+**No** — `<View>` does **not have `flex: 1` by default**.
+
+You must set `flex: 1` explicitly to fill space:
+
+```tsx
+<View style={{ flex: 1 }}>...</View>
+```
+
+---
+
+### ✅ 8. **Do we mostly use `FlatList` for grid-like layouts?**
+
+Yes — `FlatList` is:
+
+- Optimized for large lists
+- Can create **rows and columns** using `numColumns`
+- Handles recycling and memory efficiently
+
+Use `ScrollView` **only** for small fixed-length content.
+
+---
+
+### ✅ 9. **Why use `FlatList` over `ScrollView`?**
+
+| Feature     | `FlatList`                    | `ScrollView`                          |
+| ----------- | ----------------------------- | ------------------------------------- |
+| Performance | ✅ Virtualized, efficient     | ❌ Renders all at once (laggy on big) |
+| Pagination  | ✅ Built-in `onEndReached`    | ❌ Manual scroll detection            |
+| Layout      | ✅ `numColumns` for grids     | ✅ More flexible                      |
+| Use case    | Lists, feeds, infinite scroll | Small content, forms, carousels       |
+
+➡️ **Use FlatList** for anything dynamic, long, or paginated.
+
+---
+
+Let me know if you want me to draw parallels with Next.js (e.g., what `_layout.tsx` maps to in web) or a basic folder scaffold to start from.
