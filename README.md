@@ -362,4 +362,40 @@ Use `ScrollView` **only** for small fixed-length content.
 
 ---
 
-Let me know if you want me to draw parallels with Next.js (e.g., what `_layout.tsx` maps to in web) or a basic folder scaffold to start from.
+# Navigation
+
+### Difference between `router.push()` and `router.replace()` in navigation:
+
+| Method                 | Behavior                                                                                                                                         | Use case                                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| **`router.push()`**    | Pushes a new route onto the navigation stack. You can go back to the previous screen using back gesture/button.                                  | Navigating forward, e.g., from Home → Details. You want users to be able to go back.               |
+| **`router.replace()`** | Replaces the current route with the new one, **removing** the current screen from the stack. Back button will not return to the replaced screen. | Redirects, or when you don’t want users to go back, e.g., after login, or from a 404 back to home. |
+
+---
+
+### Why use `router.replace("/")` on a "Go Home" button in NotFound?
+
+- When users hit a **404 page**, you usually want to send them back to home **and prevent them from navigating back to the invalid URL**.
+- Using `.replace()` means the 404 page is removed from the navigation stack, so hitting back won’t take them back to the missing page again.
+- It avoids a **navigation loop** or confusion.
+
+---
+
+### When to use `router.push()` instead?
+
+- When you want to **add a new screen** on top of the stack, keeping history intact.
+- Example: From Home → Details → Profile, each push lets the user go back step-by-step.
+
+---
+
+### TL;DR
+
+```tsx
+// In 404 page, replace current screen so users don’t return to 404 via back button
+router.replace("/");
+
+// In normal navigation, push new screen on top so users can go back
+router.push("/details");
+```
+
+---
