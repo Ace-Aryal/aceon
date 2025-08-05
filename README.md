@@ -399,3 +399,180 @@ router.push("/details");
 ```
 
 ---
+
+## Tab vs Stack Navigation
+
+Great question, Dipesh. Understanding the difference between **Stack** and **Tabs** navigation — and how they work together in an **Expo + React Native + Expo Router** setup — is essential for any real-world app.
+
+---
+
+## 🧠 1. **Conceptual Difference**
+
+| Navigation Type | Use Case                 | Behavior                                                                                               |
+| --------------- | ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| **Stack**       | Page-by-page navigation  | Screens "stack" on top of each other (like a call stack). You can go back.                             |
+| **Tabs**        | Main sections of the app | Bottom tabs (or top tabs) let you switch between independent routes instantly. No back button usually. |
+
+---
+
+## ✅ 2. **Using Stack Navigation (in `expo-router`)**
+
+### ✅ Basic Setup (default)
+
+Create `app/index.tsx` and `app/details.tsx`:
+
+```tsx
+// app/index.tsx
+import { Link } from "expo-router";
+import { Text, View, Button } from "react-native";
+
+export default function Home() {
+  return (
+    <View>
+      <Text>Home Screen</Text>
+      <Link href="/details" asChild>
+        <Button title="Go to Details" />
+      </Link>
+    </View>
+  );
+}
+
+// app/details.tsx
+import { Text, View } from "react-native";
+
+export default function Details() {
+  return (
+    <View>
+      <Text>Details Screen</Text>
+    </View>
+  );
+}
+```
+
+### 🔄 Result:
+
+- When you click the button, it **navigates via a stack** — new screen slides in.
+- You get a back button automatically.
+
+---
+
+## ✅ 3. **Using Tabs in `expo-router`**
+
+### ✅ File structure for tabs:
+
+```
+app/
+├── (tabs)/           ← folder with tabbed navigation
+│   ├── index.tsx     ← first tab
+│   ├── menu.tsx      ← second tab
+│   └── contact.tsx   ← third tab
+└── _layout.tsx       ← this wraps tabs in a layout
+```
+
+### ✅ `app/(tabs)/_layout.tsx`
+
+```tsx
+import { Tabs } from "expo-router";
+
+export default function TabLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: "tomato",
+        headerShown: false,
+      }}
+    >
+      <Tabs.Screen name="index" options={{ title: "Home" }} />
+      <Tabs.Screen name="menu" options={{ title: "Menu" }} />
+      <Tabs.Screen name="contact" options={{ title: "Contact" }} />
+    </Tabs>
+  );
+}
+```
+
+### ✅ `app/(tabs)/index.tsx`
+
+```tsx
+import { Text, View } from "react-native";
+export default function Home() {
+  return (
+    <View>
+      <Text>Home Tab</Text>
+    </View>
+  );
+}
+```
+
+### 🔄 Result:
+
+- This renders a **bottom tab bar** with **3 tabs**.
+- Each tab is a screen.
+- You switch between them instantly — **not stacked**, no back button.
+
+---
+
+## 🤝 4. **Combining Stack + Tabs (Common Pattern)**
+
+### ✅ File structure:
+
+```
+app/
+├── (tabs)/
+│   ├── _layout.tsx         ← tab navigation
+│   ├── index.tsx           ← Home tab
+│   ├── menu.tsx
+│   └── contact.tsx
+├── details.tsx             ← stack screen OUTSIDE tabs
+└── _layout.tsx             ← root stack navigation
+```
+
+### ✅ `app/_layout.tsx` (Root Stack)
+
+```tsx
+import { Stack } from "expo-router";
+
+export default function RootLayout() {
+  return (
+    <Stack>
+      {/* This points to (tabs)/ */}
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="details" options={{ title: "Details" }} />
+    </Stack>
+  );
+}
+```
+
+Then in any tab screen (like `menu.tsx`), you can link to `/details` and it will open as a **stacked screen above tabs**.
+
+---
+
+## 📦 Summary
+
+| Pattern      | Folder                                       | Component Used           |
+| ------------ | -------------------------------------------- | ------------------------ |
+| **Stack**    | `app/`                                       | `<Stack />`              |
+| **Tabs**     | `app/(tabs)/`                                | `<Tabs />`               |
+| **Combined** | `app/_layout.tsx` + `app/(tabs)/_layout.tsx` | `<Stack>` wraps `<Tabs>` |
+
+---
+
+## 🧪 Bonus Tip: Navigating programmatically
+
+```tsx
+import { useRouter } from "expo-router";
+const router = useRouter();
+
+router.push("/details"); // Push screen
+router.replace("/menu"); // Replace screen
+router.back(); // Go back
+```
+
+---
+
+Let me know if you want:
+
+- Icons in the tab bar
+- Modal integration (`modal.tsx`)
+- Type-safe navigation between stack/tab routes using `type-safe routes` in `expo-router`
+
+You’re getting into solid territory here — mixing tabs and stacks is foundational to real-world mobile UX.
