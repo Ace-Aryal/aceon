@@ -575,4 +575,395 @@ Let me know if you want:
 - Modal integration (`modal.tsx`)
 - Type-safe navigation between stack/tab routes using `type-safe routes` in `expo-router`
 
-You’re getting into solid territory here — mixing tabs and stacks is foundational to real-world mobile UX.
+## Practices Note
+Sure, Dipesh! Here are some **additional practical notes and tips about navigation in React Native with Expo Router** that often come up and can help smooth your learning and development process:
+
+---
+
+### 1. **File-based Routing is Powerful but Requires Discipline**
+
+* Folder and file names define routes automatically.
+* Use `[param].tsx` for dynamic routes.
+* Use `(group)` folders for grouping routes without affecting URL paths.
+* Use `(slot)` folders to create multiple navigation stacks/layouts.
+* Naming matters: `_layout.tsx` controls layout/navigation for that folder.
+
+---
+
+### 2. **Keep Navigation Simple at First**
+
+* Avoid deeply nested navigators until you need them.
+* Start with a root `Stack` and a single `Tabs` layout if your app uses tabs.
+* Add complexity only when your UI flow demands it.
+
+---
+
+### 3. **Navigating Between Screens**
+
+* Use the `<Link />` component from `expo-router` for simple navigation (like anchors).
+* For programmatic navigation, use `const router = useRouter()` and methods like:
+
+  * `router.push('/path')` — navigate forward.
+  * `router.replace('/path')` — replace current screen.
+  * `router.back()` — go back.
+
+---
+
+### 4. **Passing Params**
+
+* Use URL params in file names: `[id].tsx`
+* Access params with `useLocalSearchParams()`.
+* Example: file `app/post/[id].tsx` accessed as `/post/123`.
+* Use `router.push('/post/123')` to navigate programmatically.
+
+---
+
+### 5. **Customizing Headers**
+
+* Use `screenOptions` in `<Stack>` or per-screen options with `Stack.Screen` or inside `layout.tsx`.
+* `headerShown: false` hides the header.
+* Use `headerBackground` to set custom background component.
+* Use `headerTitle` for custom titles.
+
+---
+
+### 6. **Dark Mode & Theming**
+
+* Use `Appearance.getColorScheme()` for system theme.
+* Dynamically adjust colors in `screenOptions` or styles based on theme.
+* Can be combined with state or context for theme toggling.
+
+---
+
+### 7. **Modal Screens**
+
+* `expo-router` supports modal presentation.
+* Create a special file named `modal.tsx` or folder `(modal)/`.
+* Use `presentation: 'modal'` in `screenOptions`.
+* Modals stack on top but look different (slide from bottom, transparent backgrounds).
+
+---
+
+### 8. **Deep Linking**
+
+* `expo-router` supports deep linking out of the box.
+* You can open specific screens by URL even when app is closed.
+* Configure `app.json` with schemes and prefixes if needed.
+
+---
+
+### 9. **Back Button Handling**
+
+* Android hardware back button works automatically.
+* For custom behavior, use `useBackHandler()` from `react-native` or libraries.
+* Make sure to prevent accidental exits or unwanted back navigation.
+
+---
+
+### 10. **Performance Tips**
+
+* Avoid heavy work on every navigation event.
+* Use React's lazy loading (`dynamic` imports) or `React.Suspense` for large screens.
+* Keep navigation stacks shallow where possible.
+
+---
+
+### 11. **Testing Navigation**
+
+* Use `jest-expo` or React Native Testing Library.
+* Test navigation logic separately.
+* Mock `useRouter()` for unit tests.
+
+---
+
+### Bonus: Typical Expo Router Navigation API
+
+```ts
+import { useRouter } from "expo-router";
+
+const router = useRouter();
+
+// Navigate forward
+router.push("/profile");
+
+// Replace current screen
+router.replace("/login");
+
+// Go back
+router.back();
+
+// Prefetch screen data for faster navigation
+router.prefetch("/settings");
+```
+
+---
+## Best patterns and antipatterns
+Awesome! Here are some **best practices and anti-patterns** for navigation in React Native with Expo Router, plus some handy code snippets for common tasks.
+
+---
+
+## 🌟 Best Practices for Navigation
+
+### 1. **Use File-Based Routing Consistently**
+
+* Let Expo Router handle route registration via file structure.
+* Avoid manual route registration except for fine-grained screen options.
+
+### 2. **Keep Navigation State Simple**
+
+* Don’t nest too many navigators unless necessary.
+* Use a single root Stack + Tabs combination for most apps.
+
+### 3. **Pass Params Via URL, Not Global State**
+
+* Prefer route params (`[id].tsx`) over global or context state for screen data.
+* Makes deep linking and debugging easier.
+
+### 4. **Customize Headers via Layouts**
+
+* Use `_layout.tsx` files for shared screen options.
+* Avoid repeating header logic in every screen.
+
+### 5. **Use `Link` for Declarative Navigation**
+
+* Use `<Link href="/path">` for buttons and anchors.
+* Use `router.push()` for imperative, programmatic navigation.
+
+### 6. **Handle Back Button Gracefully**
+
+* Android hardware back button behavior should be consistent.
+* Use `useBackHandler()` for special cases (e.g., confirm exit).
+
+### 7. **Use Modal Screens for Transient UI**
+
+* Use modal presentation only for screens that should not clutter the stack.
+* Use `(modal)` folders or `presentation: 'modal'`.
+
+### 8. **Implement Dark Mode Properly**
+
+* React to system theme changes with `Appearance` or user preference.
+* Avoid hardcoding colors.
+
+---
+
+## ❌ Anti-Patterns to Avoid
+
+### 1. **Manually Managing Navigation State**
+
+* Don’t store navigation state in global state or context.
+* Let the router control navigation internally.
+
+### 2. **Over-Nesting Navigators**
+
+* Deeply nested stacks and tabs cause navigation bugs and bad UX.
+* Flatten your navigator tree when possible.
+
+### 3. **Passing Large Objects as Params**
+
+* Passing big objects through route params leads to issues.
+* Pass IDs or keys, fetch the data inside the screen.
+
+### 4. **Using `className` on Non-NativeWind Components**
+
+* This won’t apply styles correctly.
+* Use styles or wrap components.
+
+---
+
+## 🔧 Handy Code Snippets
+
+### Navigate imperatively
+
+```tsx
+import { useRouter } from "expo-router";
+
+const router = useRouter();
+
+// Navigate to /profile
+router.push("/profile");
+
+// Replace current route with /login
+router.replace("/login");
+
+// Go back to previous screen
+router.back();
+```
+
+---
+
+### Read URL Params
+
+```tsx
+import { useLocalSearchParams } from "expo-router";
+
+export default function Post() {
+  const { id } = useLocalSearchParams(); // id comes from [id].tsx
+
+  return <Text>Post ID: {id}</Text>;
+}
+```
+
+---
+
+### Conditionally hide header in a layout
+
+```tsx
+import { Stack } from "expo-router";
+
+export default function Layout() {
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      {/* all child screens here won't show header */}
+    </Stack>
+  );
+}
+```
+
+---
+
+### Modal screen declaration
+
+Create a file `app/(modal)/myModal.tsx`
+
+```tsx
+import { View, Text, Button } from "react-native";
+import { useRouter } from "expo-router";
+
+export default function MyModal() {
+  const router = useRouter();
+
+  return (
+    <View>
+      <Text>This is a modal!</Text>
+      <Button title="Close" onPress={() => router.back()} />
+    </View>
+  );
+}
+```
+
+And in root layout:
+
+```tsx
+<Stack>
+  <Stack.Screen name="(modal)/myModal" options={{ presentation: "modal" }} />
+</Stack>
+```
+
+---
+
+### Theme-aware header background
+
+```tsx
+import { View, Appearance } from "react-native";
+
+const colorScheme = Appearance.getColorScheme();
+const isDarkMode = colorScheme === "dark";
+
+const HeaderBackground = () => (
+  <View
+    style={{
+      flex: 1,
+      backgroundColor: isDarkMode ? "#000" : "#fff",
+    }}
+  />
+);
+```
+
+---
+
+If you want, I can share snippets for:
+
+* Protected routes with auth guards
+* Custom tab bars
+* Animated transitions
+
+Just ask!
+
+## Search Params
+Great question! In **expo-router**, passing and reading **search params** (query parameters) is straightforward and works much like URL query strings on the web.
+
+---
+
+## How to **Pass** Search Params
+
+You can pass search params as part of the URL when navigating, for example:
+
+```tsx
+import { useRouter } from "expo-router";
+
+const router = useRouter();
+
+router.push({
+  pathname: "/search",
+  params: {
+    q: "coffee",
+    page: "2",
+  },
+});
+```
+
+This navigates to `/search?q=coffee&page=2`.
+
+---
+
+## How to **Read** Search Params in a Screen
+
+In the screen component (e.g., `app/search.tsx`), use `useSearchParams()` hook from `expo-router`:
+
+```tsx
+import { useSearchParams } from "expo-router";
+import { Text, View } from "react-native";
+
+export default function SearchScreen() {
+  const params = useSearchParams();
+  const query = params.q;
+  const page = params.page;
+
+  return (
+    <View>
+      <Text>Search query: {query}</Text>
+      <Text>Page number: {page}</Text>
+    </View>
+  );
+}
+```
+
+---
+
+## Example Summary
+
+* Navigate with params:
+
+```tsx
+router.push({
+  pathname: "/search",
+  params: { q: "coffee" }
+});
+```
+
+* Read params in `search.tsx`:
+
+```tsx
+const params = useSearchParams();
+console.log(params.q); // "coffee"
+```
+
+---
+
+## Notes
+
+* Params are always strings (or undefined if missing).
+* For multiple or complex params, you can encode JSON as a string, but keep it simple for maintainability.
+* Dynamic route params (like `[id].tsx`) are separate from search params.
+
+---
+
+If you want, I can also show you how to:
+
+* Update search params without navigation (like filtering)
+* Handle optional params
+* Combine dynamic route params and search params
+
+Just ask!
+
+
