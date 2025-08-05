@@ -31,9 +31,9 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ size, color }) => (
             <Ionicons
-              className="bg-green-600 text-white"
+              className=""
               name="add-circle"
-              color={color}
+              color={COLORS.primary}
               size={size}
             />
           ),

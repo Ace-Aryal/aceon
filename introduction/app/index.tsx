@@ -20,11 +20,18 @@ export default function Index() {
         <Text className="text-white font-bold text-4xl w-full text-center ">
           Ace Coffee
         </Text>
-        <View className="flex-1 flex justify-center items-center">
+        <View className="flex-1 flex flex-col gap-4 justify-center items-center">
           <Link href={"/menu"} className="" asChild>
-            <TouchableOpacity className="bg-orange-100 rounded-xl">
-              <Text className="text-orange-600 px-8 py-4 text-lg font-semibold">
+            <TouchableOpacity className="bg-orange-200  rounded-xl">
+              <Text className="text-orange-600 px-8 py-4 w-40 text-center text-lg font-semibold">
                 See Menu
+              </Text>
+            </TouchableOpacity>
+          </Link>
+          <Link href={"/menu"} className="" asChild>
+            <TouchableOpacity className="bg-orange-200  rounded-xl">
+              <Text className="text-orange-600 px-8 py-4 w-40 text-center text-lg font-semibold">
+                Contact Us
               </Text>
             </TouchableOpacity>
           </Link>
