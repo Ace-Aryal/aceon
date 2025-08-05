@@ -1,6 +1,9 @@
-import { Text, View } from "react-native";
+import { cn } from "@/lib/utils";
+import { Appearance, Text, View } from "react-native";
 
 export default function Index() {
+  const colorScheme = Appearance.getColorScheme();
+  const isDarkMode = colorScheme === "dark";
   return (
     <View
       style={{
@@ -8,8 +11,13 @@ export default function Index() {
         justifyContent: "center",
         alignItems: "center",
       }}
+      className={cn("flex-1 bg-white ", {
+        "bg-zinc-950": isDarkMode,
+      })}
     >
-      <Text className="">Edit app/index.tsx to edit this screen.</Text>
+      <Text className="text-red-500">
+        Edit app/index.tsx to edit this screen.
+      </Text>
     </View>
   );
 }
